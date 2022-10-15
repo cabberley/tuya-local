@@ -24,12 +24,12 @@ class TestDevice(IsolatedAsyncioTestCase):
         self.hass = hass_patcher.start()
 
         self.subject = TuyaLocalDevice(
-            "Some name", "some_dev_id", "some.ip.address", "some_local_key", self.hass()
+            "Some name", "some_dev_id", "some.ip.address", "some_local_key", None, self.hass()
         )
 
     def test_configures_tinytuya_correctly(self):
         self.mock_api.assert_called_once_with(
-            "some_dev_id", "some.ip.address", "some_local_key"
+            "some_dev_id", "some.ip.address", "some_local_key", None
         )
         self.assertIs(self.subject._api, self.mock_api())
 

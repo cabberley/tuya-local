@@ -106,6 +106,11 @@ below](#finding-your-device-id-and-local-key).
 &nbsp;&nbsp;&nbsp;&nbsp;_(string) (Required)_ Local key retrieved
 [as per the instructions below](#finding-your-device-id-and-local-key).
 
+#### device_cid
+
+&nbsp;&nbsp;&nbsp;&nbsp;_(string) (Optional)_ Node ID for devices connected via gateway
+[as per the instructions below](#finding-your-device-id-and-local-key).
+
 At the end of this step, an attempt is made to connect to the device and see if
 it returns any data. For tuya protocol version 3.1 devices, the local key is
 only used for sending commands to the device, so if your local key is

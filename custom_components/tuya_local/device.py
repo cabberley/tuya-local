@@ -17,7 +17,9 @@ from .const import (
     CONF_DEVICE_ID,
     CONF_LOCAL_KEY,
     DOMAIN,
+    CONF_DEVICE_CID,
 )
+from .helpers.config import get_device_id
 from .helpers.device_config import possible_matches
 
 
@@ -25,7 +27,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class TuyaLocalDevice(object):
-    def __init__(self, name, dev_id, address, local_key, hass: HomeAssistant):
+    def __init__(self, name, dev_id, address, local_key, dev_cid, hass: HomeAssistant):
         """
         Represents a Tuya-based device.
 
@@ -33,11 +35,13 @@ class TuyaLocalDevice(object):
             dev_id (str): The device id.
             address (str): The network address.
             local_key (str): The encryption key.
+            dev_cid (str): The sub device id.
         """
         self._name = name
         self._api_protocol_version_index = None
         self._api_protocol_working = False
-        self._api = tinytuya.Device(dev_id, address, local_key)
+        self._api = tinytuya.Device(dev_id, address, local_key, dev_cid)
+        self.dev_cid = dev_cid
         self._refresh_task = None
         self._rotate_api_protocol_version()
 
@@ -64,8 +68,8 @@ class TuyaLocalDevice(object):
 
     @property
     def unique_id(self):
-        """Return the unique id for this device (the dev_id)."""
-        return self._api.id
+        """Return the unique id for this device (the dev_id or dev_cid)."""
+        return self.dev_cid if self.dev_cid is not None else self._api.id
 
     @property
     def device_info(self):
@@ -288,20 +292,21 @@ class TuyaLocalDevice(object):
 def setup_device(hass: HomeAssistant, config: dict):
     """Setup a tuya device based on passed in config."""
 
-    _LOGGER.info(f"Creating device: {config[CONF_DEVICE_ID]}")
+    _LOGGER.info(f"Creating device: {get_device_id(config)}")
     hass.data[DOMAIN] = hass.data.get(DOMAIN, {})
     device = TuyaLocalDevice(
         config[CONF_NAME],
         config[CONF_DEVICE_ID],
         config[CONF_HOST],
         config[CONF_LOCAL_KEY],
+        config[CONF_DEVICE_CID] if CONF_DEVICE_CID in config else None,
         hass,
     )
-    hass.data[DOMAIN][config[CONF_DEVICE_ID]] = {"device": device}
+    hass.data[DOMAIN][get_device_id(config)] = {"device": device}
 
     return device
 
-
 def delete_device(hass: HomeAssistant, config: dict):
-    _LOGGER.info(f"Deleting device: {config[CONF_DEVICE_ID]}")
-    del hass.data[DOMAIN][config[CONF_DEVICE_ID]]["device"]
+    device_id = get_device_id(config)
+    _LOGGER.info(f"Deleting device: {device_id}")
+    del hass.data[DOMAIN][device_id]["device"]
