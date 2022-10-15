@@ -7,8 +7,9 @@
                 "description": "[Follow these instructions to find your device id and local key.](https://github.com/codetheweb/tuyapi/blob/master/docs/SETUP.md)",
                 "data": {
                     "host": "IP address or hostname",
-                    "device_id": "Device ID (uuid)",
-                    "local_key": "Local key"
+                    "device_id": "Device ID (uuid) or gateway id",
+                    "local_key": "Local key",
+                    "device_cid": "Sub device ID (for devices connected via gateway)"
                 }
             },
             "select_type": {
@@ -41,7 +42,8 @@
                 "description": "[Follow these instructions to find your local key.](https://github.com/codetheweb/tuyapi/blob/master/docs/SETUP.md)",
                 "data": {
                     "host": "IP address or hostname",
-                    "local_key": "Local key"
+                    "local_key": "Local key",
+                    "device_cid": "Sub device ID (for devices connected via gateway)"
                 }
             }
         },

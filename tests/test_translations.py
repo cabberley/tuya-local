@@ -53,6 +53,7 @@ def test_config_and_options_match(translations):
     config.pop("name", None)
     options.pop("host", None)
     options.pop("local_key", None)
+    options.pop("device_cid", None)
 
     test = TestCase()
     test.maxDiff = None
