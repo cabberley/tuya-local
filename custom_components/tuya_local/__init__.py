@@ -17,7 +17,7 @@ from .const import (
     CONF_DEVICE_ID,
     CONF_LOCAL_KEY,
     CONF_TYPE,
-    DOMAIN,
+    DOMAIN, CONF_DEVICE_CID,
 )
 from .device import setup_device, delete_device, get_device_id
 from .helpers.device_config import get_config
@@ -29,6 +29,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_migrate_entry(hass, entry: ConfigEntry):
     """Migrate to latest config format."""
 
+    _LOGGER.debug(f"Calling async_migrate_entry for entry {entry}.")
     CONF_TYPE_AUTO = "auto"
 
     if entry.version == 1:
@@ -129,8 +130,11 @@ async def async_migrate_entry(hass, entry: ConfigEntry):
         # Deprecated entities are removed, trim the config back to required
         # config only
         conf = {**entry.data, **entry.options}
+        if CONF_DEVICE_CID not in conf:
+            conf[CONF_DEVICE_CID] = entry.unique_id
         entry.data = {
             CONF_DEVICE_ID: conf[CONF_DEVICE_ID],
+            CONF_DEVICE_CID: conf[CONF_DEVICE_CID],
             CONF_LOCAL_KEY: conf[CONF_LOCAL_KEY],
             CONF_HOST: conf[CONF_HOST],
             CONF_TYPE: conf[CONF_TYPE],
