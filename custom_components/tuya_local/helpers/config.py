@@ -4,7 +4,7 @@ Helper for general config
 import logging
 
 from .. import DOMAIN
-from ..const import CONF_DEVICE_ID, CONF_DEVICE_CID, CONF_TYPE
+from ..const import CONF_DEVICE_ID, CONF_DEVICE_CID, CONF_TYPE, CONF_DEVICE_SUB_ID
 from .device_config import get_config
 
 _LOGGER = logging.getLogger(__name__)
@@ -45,4 +45,4 @@ async def async_tuya_setup_platform(
     async_add_entities(entities)
 
 def get_device_id(config: dict):
-    return config[CONF_DEVICE_CID] if CONF_DEVICE_CID in config and config[CONF_DEVICE_CID] != "" else config[CONF_DEVICE_ID]
+    return config[CONF_DEVICE_SUB_ID] if CONF_DEVICE_SUB_ID in config and config[CONF_DEVICE_SUB_ID] != "" else config[CONF_DEVICE_ID]
