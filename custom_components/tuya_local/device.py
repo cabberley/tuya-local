@@ -18,6 +18,7 @@ from .const import (
     CONF_LOCAL_KEY,
     DOMAIN,
     CONF_DEVICE_CID,
+    CONF_DEVICE_SUB_ID,
 )
 from .helpers.config import get_device_id
 from .helpers.device_config import possible_matches
@@ -27,7 +28,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class TuyaLocalDevice(object):
-    def __init__(self, name, dev_id, address, local_key, cid, hass: HomeAssistant):
+    def __init__(self, name, dev_id, address, local_key, cid, sid, hass: HomeAssistant):
         """
         Represents a Tuya-based device.
 
@@ -35,7 +36,8 @@ class TuyaLocalDevice(object):
             dev_id (str): The device id.
             address (str): The network address.
             local_key (str): The encryption key.
-            cid (str): The sub device id.
+            cid (str): The sub device node_id.
+            sid (str): The sub device id.
         """
         self._name = name
         self._api_protocol_version_index = None
@@ -44,11 +46,13 @@ class TuyaLocalDevice(object):
         parent = None
         tuya_device_id = dev_id
         if cid is not None:
-            _LOGGER.info(f"Creating sub device {cid} from gateway {dev_id}.")
+            _LOGGER.info(f"Creating sub device {sid} from gateway {dev_id}.")
             parent = tinytuya.Device(dev_id, address, local_key, persist=True)
-            tuya_device_id  = cid
+            tuya_device_id  = sid
             local_key = None
-        self._api = tinytuya.Device(tuya_device_id, address, local_key, cid, parent)
+            self._api = tinytuya.Device(tuya_device_id, cid=cid, parent=parent)
+        else:
+            self._api = tinytuya.Device(tuya_device_id, address, local_key, cid=cid, parent=parent)
         self.cid = cid
         self._refresh_task = None
         self._rotate_api_protocol_version()
@@ -308,6 +312,7 @@ def setup_device(hass: HomeAssistant, config: dict):
         config[CONF_HOST],
         config[CONF_LOCAL_KEY],
         config[CONF_DEVICE_CID] if CONF_DEVICE_CID in config else None,
+        config[CONF_DEVICE_SUB_ID] if CONF_DEVICE_SUB_ID in config else None,
         hass,
     )
     hass.data[DOMAIN][get_device_id(config)] = {"device": device}

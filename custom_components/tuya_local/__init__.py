@@ -17,7 +17,7 @@ from .const import (
     CONF_DEVICE_ID,
     CONF_LOCAL_KEY,
     CONF_TYPE,
-    DOMAIN, CONF_DEVICE_CID,
+    DOMAIN, CONF_DEVICE_CID, CONF_DEVICE_SUB_ID,
 )
 from .device import setup_device, delete_device, get_device_id
 from .helpers.device_config import get_config
@@ -133,6 +133,7 @@ async def async_migrate_entry(hass, entry: ConfigEntry):
         entry.data = {
             CONF_DEVICE_ID: conf[CONF_DEVICE_ID],
             CONF_DEVICE_CID: conf[CONF_DEVICE_CID] if CONF_DEVICE_CID in conf else "",
+            CONF_DEVICE_SUB_ID: conf[CONF_DEVICE_SUB_ID] if CONF_DEVICE_SUB_ID in conf else "",
             CONF_LOCAL_KEY: conf[CONF_LOCAL_KEY],
             CONF_HOST: conf[CONF_HOST],
             CONF_TYPE: conf[CONF_TYPE],
